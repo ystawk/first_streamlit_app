@@ -13,6 +13,11 @@ def get_fruit_load_list():
   with my_cnx.cursor() as my_cur:
     my_cur.execute("SELECT * FROM FRUIT_LOAD_LIST")
     return my_cur.fetchall()
+
+def insert_row_sf(new_fruit):
+  with my_cnx.cursor() as my_cur:
+    my_cur.execute ("insert into fruit_load_list values ('from streamlit')")
+    return 'Thank you for adding ' + new_fruit
   
 streamlit.title('My parents new healthy diner')
 streamlit.header('Breakfast Menu')
@@ -52,8 +57,11 @@ if streamlit.button ('Get Fruit List'):
 
 streamlit.stop()
 ## Allow the user to add a fruit to the list
-add_my_fruit = streamlit.text_input('What fruit would you like to add?','Kiwi')
-streamlit.write('Thank you for adding a new fruit')
+add_my_fruit = streamlit.text_input('What fruit would you like to add?')
+if streamlit.button ('Add a fruit to the list'):
+  my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
+  new_fruit = insert_row_sf (add_my_fruit)
+  streamlit.text(new_fruit)
 
 # Adding the fruit to database
-my_cur.execute ("insert into fruit_load_list values ('from streamlit')")
+
